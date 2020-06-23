@@ -14,7 +14,6 @@ namespace CarExample.Controllers
 {
     public class AutomobilesController : Controller
     {
-        //private readonly AutomobileDataContext _context;
         private readonly IUnitOfWork _uow;
 
         public AutomobilesController(IUnitOfWork uow)
@@ -22,126 +21,106 @@ namespace CarExample.Controllers
             _uow = uow;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            //return View(await _context.Automobiles.ToListAsync());
             return View(_uow.Automobiles.GetAll());
         }
 
-        //public async Task<IActionResult> Details(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
+        public IActionResult Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        //    var automobile = await _context.Automobiles
-        //        .FirstOrDefaultAsync(m => m.Id == id);
-        //    if (automobile == null)
-        //    {
-        //        return NotFound();
-        //    }
+            var automobile = _uow.Automobiles.Get(id);
+            if (automobile == null)
+            {
+                return NotFound();
+            }
 
-        //    return View(automobile);
-        //}
+            return View(automobile);
+        }
 
-        //public IActionResult Create()
-        //{
-        //    ViewBag.Colors = new SelectList(Enum.GetValues(typeof(ConsoleColor)));
-        //    ViewBag.BodyTypes = new SelectList(Enum.GetValues(typeof(BodyType)));
-        //    return View();
-        //}
+        public IActionResult Create()
+        {
+            ViewBag.Colors = new SelectList(Enum.GetValues(typeof(ConsoleColor)));
+            ViewBag.BodyTypes = new SelectList(Enum.GetValues(typeof(BodyType)));
+            return View();
+        }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("Brand,Color,BodyType,Power,Id,CreationDate")] Automobile automobile)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _context.Add(automobile);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(automobile);
-        //}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create([Bind("Brand,Color,BodyType,Power,Id,CreationDate")] Automobile automobile)
+        {
+            if (ModelState.IsValid)
+            {
+                _uow.Automobiles.Create(automobile);
+                _uow.Save();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(automobile);
+        }
 
-        //public async Task<IActionResult> Edit(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
+        public IActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        //    var automobile = await _context.Automobiles.FindAsync(id);
-        //    if (automobile == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return View(automobile);
-        //}
+            var automobile = _uow.Automobiles.Get(id);
+            if (automobile == null)
+            {
+                return NotFound();
+            }
+            ViewBag.Colors = new SelectList(Enum.GetValues(typeof(ConsoleColor)));
+            ViewBag.BodyTypes = new SelectList(Enum.GetValues(typeof(BodyType)));
+            return View(automobile);
+        }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(int id, [Bind("Brand,Color,BodyType,Power,Id,CreationDate")] Automobile automobile)
-        //{
-        //    if (id != automobile.Id)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(int id, [Bind("Brand,Color,BodyType,Power,Id,CreationDate")] Automobile automobile)
+        {
+            if (id != automobile.Id)
+            {
+                return NotFound();
+            }
 
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            _context.Update(automobile);
-        //            await _context.SaveChangesAsync();
-        //        }
-        //        catch (DbUpdateConcurrencyException)
-        //        {
-        //            if (!AutomobileExists(automobile.Id))
-        //            {
-        //                return NotFound();
-        //            }
-        //            else
-        //            {
-        //                throw;
-        //            }
-        //        }
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(automobile);
-        //}
+            if (ModelState.IsValid)
+            {
+                _uow.Automobiles.Edit(automobile);
+                _uow.Save();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(automobile);
+        }
 
-        //public async Task<IActionResult> Delete(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
+        public IActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        //    var automobile = await _context.Automobiles
-        //        .FirstOrDefaultAsync(m => m.Id == id);
-        //    if (automobile == null)
-        //    {
-        //        return NotFound();
-        //    }
+            var automobile = _uow.Automobiles.Get(id);
+            if (automobile == null)
+            {
+                return NotFound();
+            }
 
-        //    return View(automobile);
-        //}
+            return View(automobile);
+        }
 
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(int id)
-        //{
-        //    var automobile = await _context.Automobiles.FindAsync(id);
-        //    _context.Automobiles.Remove(automobile);
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Index));
-        //}
-
-        //private bool AutomobileExists(int id)
-        //{
-        //    return _context.Automobiles.Any(e => e.Id == id);
-        //}
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var automobile = _uow.Automobiles.Get(id);
+            _uow.Automobiles.Remove(automobile);
+            _uow.Save();
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

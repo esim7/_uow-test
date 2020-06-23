@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain.Model;
 using Infrastructure.DataBase.EFImplementations;
 using Infrastructure.DataBase.Interfaces;
 using Infrastructure.EntityFramework;
@@ -28,9 +29,14 @@ namespace CarExample
         public void ConfigureServices(IServiceCollection services)
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
-            //services.AddDbContext<EFUnitOfWork>(options => options.UseSqlServer(connection));
+            services.AddDbContext<AutomobileDataContext>(options => options.UseSqlServer(connection));
 
-            services.AddSingleton<IUnitOfWork, EFUnitOfWork>();
+            //services.AddSingleton<IRepository<Automobile>, AutomobilesRepository>();
+            //services.AddSingleton<IUnitOfWork, EFUnitOfWork>();
+
+            services.AddScoped<IRepository<Automobile>, AutomobilesRepository>();
+            services.AddScoped<IUnitOfWork, EFUnitOfWork>();
+
             services.AddControllersWithViews();
 
 

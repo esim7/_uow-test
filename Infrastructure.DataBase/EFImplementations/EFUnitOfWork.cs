@@ -11,8 +11,8 @@ namespace Infrastructure.DataBase.EFImplementations
 
         public EFUnitOfWork(IRepository<Automobile>automobiles, AutomobileDataContext context)
         {
-            Automobiles = automobiles;
             _context = context;
+            Automobiles = automobiles;
         }
 
         public void Save()
